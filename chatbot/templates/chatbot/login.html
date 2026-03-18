@@ -1,0 +1,101 @@
+{% extends 'chatbot/base.html' %}
+
+{% block title %}Sign In — NeuralChat AI{% endblock %}
+
+{% block extra_css %}
+<style>
+body{display:flex;align-items:center;justify-content:center;min-height:100vh;overflow:auto}
+.auth-wrap{display:flex;width:100%;max-width:900px;min-height:520px;border-radius:18px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.5);margin:20px}
+/* Left panel */
+.auth-left{flex:1;background:linear-gradient(135deg,#0a1a0a 0%,#0d2b0d 100%);padding:48px 40px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
+.auth-left::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(34,197,94,.15),transparent 60%);pointer-events:none}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:40px}
+.brand-orb{width:36px;height:36px;border-radius:50%;background:conic-gradient(from 0deg,#22c55e,#16a34a,#000,#22c55e);animation:spin 6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.brand-name{font-size:1.25rem;font-weight:700;color:#f0f0f0;letter-spacing:-.02em}
+.auth-left h1{font-size:2rem;font-weight:700;color:#f0f0f0;margin-bottom:12px;line-height:1.2}
+.auth-left h1 span{color:#22c55e}
+.auth-left p{color:#666;font-size:.95rem;line-height:1.7;margin-bottom:28px}
+.pill-row{display:flex;gap:8px;flex-wrap:wrap}
+.pill{padding:6px 14px;border:1px solid rgba(34,197,94,.3);border-radius:20px;font-size:.78rem;color:#22c55e;background:rgba(34,197,94,.08)}
+/* Right panel */
+.auth-right{flex:1;background:var(--bg2);padding:48px 40px;display:flex;flex-direction:column;justify-content:center}
+.auth-right h2{font-size:1.6rem;font-weight:700;color:var(--text);margin-bottom:6px}
+.auth-right .sub{color:var(--text2);font-size:.9rem;margin-bottom:28px}
+.error-box{background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.3);border-radius:var(--radius);padding:12px 14px;color:#fca5a5;font-size:.85rem;margin-bottom:18px;display:flex;gap:8px;align-items:flex-start}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:.78rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.inp-wrap{position:relative}
+.inp-wrap input{width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);font-size:.9rem;color:var(--text);font-family:'Inter',sans-serif;outline:none;transition:border .2s,box-shadow .2s}
+.inp-wrap input:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-glow)}
+.inp-wrap input::placeholder{color:var(--text3)}
+.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:1rem;color:var(--text2);line-height:1;padding:2px}
+.btn-submit{width:100%;padding:12px;background:var(--green);color:#000;font-size:.9rem;font-weight:700;border:none;border-radius:var(--radius);margin-top:6px;transition:background .2s,transform .1s}
+.btn-submit:hover{background:var(--green-light);transform:translateY(-1px)}
+.btn-submit:active{transform:translateY(0)}
+.divider{text-align:center;color:var(--text3);font-size:.8rem;margin:18px 0;position:relative}
+.divider::before,.divider::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:var(--border)}
+.divider::before{left:0}.divider::after{right:0}
+.switch{text-align:center;font-size:.875rem;color:var(--text2)}
+.switch a{color:var(--green);font-weight:600}
+.theme-btn{display:flex;justify-content:center;margin-top:20px}
+.theme-btn button{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:6px 16px;font-size:.8rem;color:var(--text2);transition:.2s}
+.theme-btn button:hover{background:var(--bg4);color:var(--text)}
+@media(max-width:640px){.auth-wrap{flex-direction:column;margin:0;border-radius:0;min-height:100vh}.auth-left{display:none}.auth-right{padding:32px 24px}}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-left">
+    <div class="brand">
+      <div class="brand-orb"></div>
+      <span class="brand-name">NeuralChat AI</span>
+    </div>
+    <h1>Your AI,<br><span>Your Language.</span></h1>
+    <p>Chat in English, Tamil, or Tanglish.<br>Powered by Claude AI.</p>
+    <div class="pill-row">
+      <span class="pill">🇺🇸 English</span>
+      <span class="pill">🇮🇳 Tamil</span>
+      <span class="pill">✨ Tanglish</span>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <h2>Welcome back</h2>
+    <p class="sub">Sign in to continue your conversations</p>
+
+    {% if error %}
+    <div class="error-box">⚠️ {{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="{% url 'login' %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="username">Username</label>
+        <div class="inp-wrap">
+          <input type="text" id="username" name="username"
+                 value="{{ username|default:'' }}"
+                 placeholder="Enter your username" required autocomplete="username">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="inp-wrap">
+          <input type="password" id="password" name="password"
+                 placeholder="Enter your password" required autocomplete="current-password">
+          <button type="button" class="pw-toggle" data-for="password">👁</button>
+        </div>
+      </div>
+      <button type="submit" class="btn-submit">Sign In →</button>
+    </form>
+
+    <div class="divider">or</div>
+    <p class="switch">No account? <a href="{% url 'signup' %}">Create one free</a></p>
+
+    <div class="theme-btn">
+      <button onclick="toggleTheme()"><span class="theme-icon">☀️</span> Toggle Theme</button>
+    </div>
+  </div>
+</div>
+{% endblock %}

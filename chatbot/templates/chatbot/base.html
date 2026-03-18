@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}NeuralChat AI{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── CSS Variables ── */
+:root {
+    --green: #22c55e;
+    --green-light: #4ade80;
+    --green-dark: #16a34a;
+    --green-glow: rgba(34,197,94,0.15);
+    --radius: 10px;
+    --transition: 0.2s ease;
+}
+[data-theme="dark"] {
+    --bg: #0d0d0d;
+    --bg2: #141414;
+    --bg3: #1a1a1a;
+    --bg4: #222222;
+    --border: #2a2a2a;
+    --text: #f0f0f0;
+    --text2: #888888;
+    --text3: #444444;
+    --user-msg: #1a2e1a;
+    --ai-msg: #141414;
+}
+[data-theme="light"] {
+    --bg: #f8f8f8;
+    --bg2: #ffffff;
+    --bg3: #eeeeee;
+    --bg4: #e5e5e5;
+    --border: #e0e0e0;
+    --text: #111111;
+    --text2: #555555;
+    --text3: #aaaaaa;
+    --user-msg: #dcfce7;
+    --ai-msg: #ffffff;
+}
+/* ── Reset ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',sans-serif;font-size:15px;line-height:1.6;background:var(--bg);color:var(--text);overflow:hidden;transition:background .2s,color .2s}
+a{color:var(--green);text-decoration:none}
+a:hover{text-decoration:underline}
+button{cursor:pointer;font-family:'Inter',sans-serif}
+/* ── Spinner ── */
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* ── Toast ── */
+#toast-wrap{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{padding:10px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);font-size:.85rem;color:var(--text);animation:slideIn .3s ease;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+@keyframes slideIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+</style>
+{% block extra_css %}{% endblock %}
+</head>
+<body>
+<div id="toast-wrap"></div>
+{% block content %}{% endblock %}
+<script>
+// ── Theme ──
+function getTheme(){return localStorage.getItem('nc-theme')||'dark'}
+function applyTheme(t){
+    document.documentElement.setAttribute('data-theme',t);
+    localStorage.setItem('nc-theme',t);
+    document.querySelectorAll('.theme-icon').forEach(el=>{
+        el.textContent = t==='dark' ? '☀️' : '🌙';
+    });
+}
+function toggleTheme(){applyTheme(getTheme()==='dark'?'light':'dark')}
+applyTheme(getTheme());
+
+// ── Toast ──
+function showToast(msg,dur=3000){
+    const w=document.getElementById('toast-wrap');
+    const t=document.createElement('div');
+    t.className='toast';t.textContent=msg;
+    w.appendChild(t);
+    setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(40px)';t.style.transition='.3s';setTimeout(()=>t.remove(),300)},dur);
+}
+
+// ── Password toggle ──
+document.addEventListener('DOMContentLoaded',()=>{
+    document.querySelectorAll('.pw-toggle').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+            const inp=document.getElementById(btn.dataset.for);
+            if(!inp)return;
+            inp.type = inp.type==='password'?'text':'password';
+            btn.textContent = inp.type==='password'?'👁':'🙈';
+        });
+    });
+});
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
